@@ -1,0 +1,39 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "北京市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [116.05, 40.05],
+            [116.05, 39.92],
+            [116.55, 39.92],
+            [116.55, 40.05]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "上海市"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [121.47, 31.23],
+            [121.47, 31.20],
+            [121.53, 31.20],
+            [121.53, 31.23]
+          ]
+        ]
+      }
+    }
+  ]
+}
