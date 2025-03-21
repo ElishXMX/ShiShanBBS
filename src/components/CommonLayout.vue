@@ -14,10 +14,10 @@
             router
           >
             <el-menu-item index="/home">首页</el-menu-item>
-            <el-menu-item index="/hot">热帖排行</el-menu-item>
-            <el-menu-item index="/messages">留言墙</el-menu-item>
-            <el-menu-item index="/post">我要发帖</el-menu-item>
-            <el-menu-item index="/profile">个人中心</el-menu-item>
+            <el-menu-item index="/HotPosts">热帖排行</el-menu-item>
+            <el-menu-item index="/Chat">私聊</el-menu-item>
+            <el-menu-item index="/Post">我要发帖</el-menu-item>
+            <el-menu-item index="/MyProfile">个人中心</el-menu-item>
           </el-menu>
         </div>
       </el-header>

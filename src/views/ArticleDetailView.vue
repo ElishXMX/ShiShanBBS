@@ -1,9 +1,24 @@
 <template>
-  文章详情
+  这是文章详情
+  <div class="article-container">
+    <div class="markdown-body" v-html="processedContent"></div>
+  </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue'
+import DOMPurify from 'dompurify'
 
+const props = defineProps({
+  content: {
+    type: String,
+    required: true
+  }
+})
+
+const processedContent = computed(() => {
+  return DOMPurify.sanitize(props.content)
+})
 </script>
 
 <style scoped>

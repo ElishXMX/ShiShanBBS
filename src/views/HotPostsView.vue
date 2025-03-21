@@ -14,7 +14,8 @@
             </div>
           </el-aside>
           <el-main>
-            <div class="search-bar">
+            <el-card>
+              <div class="search-bar">
               <el-input
                 v-model="searchKeyword"
                 placeholder="搜索文章标题"
@@ -48,6 +49,7 @@
                 class="pagination"
               />
             </div>
+            </el-card>
           </el-main>
           <el-aside width="200px">
             

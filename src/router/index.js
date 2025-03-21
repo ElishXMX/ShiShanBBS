@@ -1,55 +1,71 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import CommonLayout from '@/components/CommonLayout.vue'
+const routes = [
+  {
+    path: '/',
+    name: 'head',
+    component: () => import('@/components/CommonLayout.vue'),
+    children: [
+      {
+        path: '/home',
+        name: 'Home',
+        component: () => import('@/views/HomeView.vue')
+      },
+      {
+        path: '/HotPosts',
+        name: 'HotPosts',
+        component: () => import('@/views/HotPostsView.vue')
+      },
+      {
+        path: '/Chat',
+        name: 'Chat',
+        component: () => import('@/views/ChatWith.vue')
+      },
+      {
+        path: '/Post',
+        name: 'post',
+        component: () => import('@/views/PostView.vue')
+      },
+      {
+        path: '/MyProfile',
+        name: 'MyProfile',
+        component: () => import('@/views/ProfileView.vue')
+      },
+      {
+        path: '/UserProfile',
+        name: 'UserProfile',
+        component: () => import('@/views/UserProfileView.vue')
+      },
+      {
+        path: '/article',
+        name: 'article',
+        component: () => import('@/views/ArticleDetailView.vue')
+      },
+    ]
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/LoginAnd.vue')
+  },
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      redirect: '/home',
-      component: CommonLayout,
-      children: [
-        { path: '/userprofile', component: () => import('@/views/UserProfileView.vue') },
-        { path: '/article', component: () => import('@/views/ArticleDetailView.vue') },
-        {
-          path: 'home',
-          name: 'home',
-          component: () => import('@/views/HomeView.vue')
-        },
-        {
-          path: 'hot',
-          name: 'hot',
-          component: () => import('@/views/HotPostsView.vue')
-        },
-        {
-          path: 'messages',
-          name: 'messages',
-          component: () => import('@/views/MessagesView.vue')
-        },
-        {
-          path: 'post',
-          name: 'post',
-          component: () => import('@/views/PostView.vue')
-        },
-        {
-          path: 'profile',
-          name: 'profile',
-          component: () => import('@/views/ProfileView.vue')
-        }
-      ]
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
     }
-  ]
+  }
 })
 
+// 全局路由守卫示例
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('authToken')
-  
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    // next({ name: 'Login' })
-  } else {
-    next()
-  }
+  // 这里可以添加权限验证等逻辑
+  next()
 })
 
 export default router
