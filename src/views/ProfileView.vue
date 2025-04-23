@@ -1,29 +1,65 @@
 <template>
-  个人中心
-  <div class="hot-container">
-    
-    <el-card class="user-card">
-      <div class="user-info">
-        <el-avatar :size="60" />
-        <div class="user-meta">
-          <h3>用户名：{{ userInfo.username }}</h3>
-          <p>真实姓名：{{ userInfo.realName }}</p>
-          <p>账号ID：{{ userInfo.userId }}</p>
-          <p>现居地：{{ userInfo.location }}</p>
-          <p>职业：{{ userInfo.occupation }}</p>
-          <p>工作岗位：{{ userInfo.jobTitle }}</p>
-          <el-button type="primary" @click="showEditForm = !showEditForm">修改基本信息</el-button>
-          <el-button 
-            type="danger" 
-            @click="handleLogout"
-            class="logout-btn"
-          >
-            退出登录
-          </el-button>
-          <el-button type="primary" @click="showPasswordForm = !showPasswordForm">修改密码</el-button>
+  <div class="separator">
+            <img src="../assets/主页.svg" alt="Milho Separator" class="separator-image" />
+            <h2>我的主页</h2>
+          </div>
+  <div class="profile-container">
+    <div class="grid-container">
+      <el-card class="user-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
+        <div class="user-info">
+          <el-avatar :size="80" />
+          <div class="user-meta">
+            <h3 class="username">{{ userInfo.username }}</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">真实姓名：</span>
+                <span class="value">{{ userInfo.realName }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">账号ID：</span>
+                <span class="value">{{ userInfo.userId }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">现居地：</span>
+                <span class="value">{{ userInfo.location }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">职业：</span>
+                <span class="value">{{ userInfo.occupation }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">工作岗位：</span>
+                <span class="value">{{ userInfo.jobTitle }}</span>
+              </div>
+            </div>
+            <div class="action-buttons">
+              <el-button type="primary" @click="showEditForm = !showEditForm" round>修改基本信息</el-button>
+              <el-button type="danger" @click="handleLogout" round>退出登录</el-button>
+              <el-button type="primary" @click="showPasswordForm = !showPasswordForm" round>修改密码</el-button>
+            </div>
+          </div>
         </div>
-      </div>
-    </el-card>
+      </el-card>
+      <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
+        <h3 class="section-title">我的帖子</h3>
+        <div class="posts-grid">
+          <el-card v-for="post in myPosts" :key="post.id" class="post-item" :style="{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px' }">
+            <div class="post-header">
+              <h4 class="post-title">{{ post.title }}</h4>
+              <p class="post-content">{{ post.content }}</p>
+              <div class="post-meta">
+                <span class="post-date">发布时间：{{ post.createTime }}</span>
+              </div>
+            </div>
+          </el-card>
+        </div>
+        <el-pagination
+          layout="prev, pager, next"
+          :total="myPosts.length"
+          class="pagination"
+        />
+      </el-card>
+    </div>
     <div v-show="showEditForm || showPasswordForm" class="mask">
       <div v-show="showEditForm" class="mask-content">
         <el-form :model="editForm" label-width="80px" class="edit-form">
@@ -62,30 +98,170 @@
         </el-form>
       </div>
     </div>
-
-    <el-card class="my-posts">
-      <h3>我的帖子</h3>
-      <el-card 
-        v-for="post in myPosts" 
-        :key="post.id"
-        class="post-item"
-      >
-        <div class="post-header">
-          <h4>{{ post.title }}</h4>
-          <p class="post-content">{{ post.content }}</p>
-          <div class="post-meta">
-            <span>发布时间：{{ post.createTime }}</span>
-          </div>
-        </div>
-      </el-card>
-      <el-pagination
-        layout="prev, pager, next"
-        :total="myPosts.length"
-        class="pagination"
-      />
-    </el-card>
   </div>
 </template>
+
+<style scoped>
+.separator{
+  width: 90%;
+  height: 100px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 20px auto;
+  /* background-color: #FFA500; */
+  border-radius: 30px;
+  padding: 10px;
+  border-bottom: 5px solid #FFA500;
+}
+.separator h2{
+  margin-left: 20px;
+  font-size: 40px;
+  font-weight: bold;
+  font-style: normal;
+  color: #333;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 1px;
+  line-height: 0;
+}
+
+.separator-image {
+  max-width: 80px; 
+  height: auto;
+}
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.user-card {
+  padding: 1.5rem;
+}
+
+.user-info {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.user-meta {
+  flex: 1;
+}
+
+.username {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #303133;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.label {
+  color: #606266;
+}
+
+.value {
+  color: #303133;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.posts-card {
+  padding: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+  color: #303133;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.post-item {
+  padding: 1rem;
+  transition: transform 0.2s ease;
+}
+
+.post-item:hover {
+  transform: translateY(-2px);
+}
+
+.post-title {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #303133;
+}
+
+.post-content {
+  font-size: 0.9rem;
+  color: #606266;
+  margin-bottom: 0.75rem;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #909399;
+}
+
+.pagination {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.mask-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.edit-form,
+.password-form {
+  margin-top: 1rem;
+}
+</style>
 
 <script setup>
 import { ref } from 'vue'

@@ -1,67 +1,76 @@
 <template>
-  <el-container >
-          <el-aside width="200px">
-            <div class="hot-topics">
-              <h3>热门话题</h3>
-              <el-tag
-                v-for="tag in ['Vue3', 'SpringBoot', '微服务']"
-                :key="tag"
-                class="topic-tag"
-                effect="dark"
-              >
-                {{ tag }}
-              </el-tag>
+  <el-container class="hot-container">
+    <el-aside width="240px" class="left-aside">
+      <el-card class="hot-topics-card" >
+        <h3 class="section-title">热门话题</h3>
+        <div class="tags-container">
+          <el-tag
+            v-for="tag in ['Vue3', 'SpringBoot', '微服务','SpringBoot','SpringBoot','SpringBoot']"
+            :key="tag"
+            class="topic-tag"
+            effect="dark"
+            @click="handleTagClick(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+        </div>
+      </el-card>
+    </el-aside>
+    <el-main>
+      <div class="separator">
+          <img src="../assets/文章.svg" alt="Milho Separator" class="separator-image" />
+          <h2>热帖排行</h2>
+        </div>
+      <el-card class="main-card">
+        <div class="search-bar">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索文章标题"
+          clearable
+          @input="handleSearch"
+          style="width: 80%"
+          class="searchInput"
+        >
+          <template #prefix>
+            <el-icon><search /></el-icon>
+          </template>
+        </el-input>
+      </div>
+      <div class="post-list">
+        <el-card v-for="post in filteredPosts" :key="post.id" class="post-card" @click="handlePostClick(post.id)">
+          <div class="post-header">
+            <h3>{{ post.title }}</h3>
+            <p class="post-content">{{ post.content }}</p>
+            <div class="post-image">
+            <img :src="post.imageUrl" alt="帖子配图">
+          </div>
+            <div class="post-meta">
+              <span>作者：{{ post.author }}</span>
+              <span>时间：{{ post.time }}</span>
             </div>
-          </el-aside>
-          <el-main>
-            <el-card>
-              <div class="search-bar">
-              <el-input
-                v-model="searchKeyword"
-                placeholder="搜索文章标题"
-                clearable
-                @input="handleSearch"
-                style="width: 80%"
-              >
-                <template #prefix>
-                  <el-icon><search /></el-icon>
-                </template>
-              </el-input>
-            </div>
-            <div class="post-list">
-              <el-card v-for="post in filteredPosts" :key="post.id" class="post-card" @click="handlePostClick(post.id)">
-                <div class="post-header">
-                  <h3>{{ post.title }}</h3>
-                  <p class="post-content">{{ post.content }}</p>
-                  <div class="post-image">
-                  <img :src="post.imageUrl" alt="帖子配图">
-                </div>
-                  <div class="post-meta">
-                    <span>作者：{{ post.author }}</span>
-                    <span>时间：{{ post.time }}</span>
-                  </div>
-                </div>
-               
-              </el-card>
-              <el-pagination
-                layout="prev, pager, next"
-                :total="filteredPosts.length"
-                class="pagination"
-              />
-            </div>
-            </el-card>
-          </el-main>
-          <el-aside width="200px">
-            
-            <div class="user-panel">
-              <h3>我的信息</h3>
-              <el-avatar :size="80" />
-              <p>用户名：访客</p>
-              <p>积分：0</p>
-              <el-button type="text">查看资料</el-button>
-            </div>
-          </el-aside>
-        </el-container>
+          </div>
+          
+        </el-card>
+        <el-pagination
+          layout="prev, pager, next"
+          :total="filteredPosts.length"
+          class="pagination"
+        />
+      </div>
+      </el-card>
+    </el-main>
+    <el-aside width="200px" class="right-aside">
+      <el-card>
+        <div class="user-panel">
+        <h3>我的信息</h3>
+        <el-avatar :size="80" />
+        <p>用户名：访客</p>
+        <p>积分：0</p>
+        <el-button type="text">查看资料</el-button>
+      </div>
+      </el-card>
+    </el-aside>
+  </el-container>
 </template>
 
 <script setup>
@@ -86,6 +95,7 @@ const filteredPosts = computed(() => {
 })
 
 const handlePostClick = (postId) => {
+  console.log(`点击了文章：${postId}`)
   router.push(`/article`)
 }
 const posts = ref([
@@ -109,12 +119,47 @@ const posts = ref([
 </script>
 
 <style scoped>
+.separator{
+  width: 90%;
+  height: 100px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 20px auto;
+  /* background-color: #FFA500; */
+  border-radius: 30px;
+  padding: 10px;
+  border-bottom: 5px solid #FFA500;
+}
+.separator h2{
+  margin-left: 20px;
+  font-size: 40px;
+  font-weight: bold;
+  font-style: normal;
+  color: #333;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 1px;
+  line-height: 0;
+}
+
+.separator-image {
+  max-width: 80px; 
+  height: auto;
+}
+.hot-topics-card{
+  display: flex;
+  justify-content: center;
+  align-items: center
+}
+
 .hot-container {
   padding: 20px;
 }
 
 .search-bar {
   margin-bottom: 20px;
+  margin: auto;
   width: 300px;
 }
 
@@ -125,6 +170,8 @@ const posts = ref([
 
 .post-card {
   margin: 15px 0;
+  padding:20px;
+  border-radius: 20px;
 }
 
 .post-content {
@@ -202,5 +249,52 @@ const posts = ref([
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.left-aside,.right-aside{
+  margin-top: 20px;
+  background-color: transparent;
+  height: auto;
+  margin-right: 20px;
+  margin-left: 20px;
+  border: 0cap;
+  border-radius: 2%;
+  
+}
+.main-card{
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 2%;
+  height:80vh
+}
+.searchInput{
+  transition: all 0.3s ease;
+}
+
+.searchInput .el-input__wrapper {
+  border: 2px solid var(--el-border-color);
+  transition: all 0.3s ease;
+}
+
+.searchInput .el-input__wrapper:hover {
+  border-color: var(--el-color-primary);
+}
+
+.searchInput .el-input__wrapper.is-focus {
+  border-color: var(--el-color-primary);
+  box-shadow: 0 0 8px rgba(var(--el-color-primary-rgb), 0.3);
+}
+
+.searchInput .el-input__clear {
+  transition: opacity 0.3s ease;
+}
+
+.searchInput .el-input__clear:hover {
+  opacity: 0.8;
+}
+.pagination {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
 }
 </style>

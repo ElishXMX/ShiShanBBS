@@ -1,15 +1,21 @@
 <template>
   <el-container>
       <el-main class="center-content">
+          <div class="separator">
+            <img src="../assets/地图.svg" alt="Milho Separator" class="separator-image" />
+            <h2>主要成员分布</h2>
+          </div>
           <div class="map-container" style="height: 70vh;">
-              <div ref="chinaMap" id="chinaMap" style="width: 100%;height:100%;"></div>
+              <div ref="chinaMap" id="chinaMap" style="width: 80%;height:100%;margin: auto;"></div>
+          </div>
+          <div class="separator">
+            <img src="../assets/computer.svg" alt="Milho Separator" class="separator-image" />
+            <h2>主要成员</h2>
           </div>
           <div class="user-container" >
-              <el-carousel :interval="5000" height="420px"  type="card" :initial-visible-count="5">
-                  <el-carousel-item v-for="user in chunkedUsers" :key="index">
-                      <TDCard
-                      :user="user"
-                      />
+              <el-carousel :interval="5000" height="500px"  type="card" :initial-visible-count="5" indicator-position="outside">
+                  <el-carousel-item v-for="user in chunkedUsers" :key="user.id" class="card">
+                    <Card :user="user"/>
                   </el-carousel-item>
               </el-carousel>
           </div>
@@ -24,6 +30,7 @@ import { ref, onMounted, onUnmounted, computed, reactive } from 'vue';
 import { useDebounce } from '@/utils/useDebounce';
 import { useRouter } from 'vue-router'
 import TDCard from '../components/TDCard.vue'
+import Card from '../components/Card.vue'
 const router = useRouter()
 
 const handleUserClick = (userId) => {
@@ -345,19 +352,51 @@ onUnmounted(() => {
 .el-main {
   padding: 0 !important;
 }
-
+.card{
+  background-color: transparent;
+  height: auto;
+  width: auto;
+}
 .post-card {
   margin: 0 !important;
 }
 
 .map-container {
-  background: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+ padding: 20px;
+}
+.separator{
+  width: 90%;
+  height: 100px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 20px auto;
+  /* background-color: #FFA500; */
+  border-radius: 30px;
+  padding: 10px;
+  border-bottom: 5px solid #FFA500;
+}
+.separator h2{
+  margin-left: 20px;
+  font-size: 40px;
+  font-weight: bold;
+  font-style: normal;
+  color: #333;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 1px;
+  line-height: 0;
+}
+
+.separator-image {
+  max-width: 80px; 
+  height: auto;
 }
 
 .user-container {
   max-width: 1200px;
   margin: 0 auto;
+  margin-bottom: 100px
 }
 
 .world-map-container {
@@ -441,3 +480,5 @@ onUnmounted(() => {
   height: 400px; */
 }
 </style>
+addEventListener('mousewheel', handler, { passive: true })
+addEventListener('wheel', handler, { passive: true })

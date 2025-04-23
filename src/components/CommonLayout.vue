@@ -72,7 +72,14 @@ const activeMenu = computed(() => route.path)
   border-bottom: none;
   height: 100%;
 }
-
+.nav-menu .el-menu-item {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-size: 18px; /* 调整字体大小 */
+  min-width: 120px; /* 调整最小宽度 */
+}
 .main-content {
 margin-top: 40px;
   height: 100%;

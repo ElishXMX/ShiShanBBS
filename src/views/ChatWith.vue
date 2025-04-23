@@ -1,4 +1,9 @@
 <template>
+  <div class="separator">
+            <img src="../assets/聊天.svg" alt="Milho Separator" class="separator-image" />
+            <h2>私聊</h2>
+          </div>
+  <el-card class="card">
     <div class="wrapper">
         <div class="container">
             <div class="left">
@@ -44,14 +49,14 @@
                     </div>
                 </div>
                 <div class="write">
-                    <a href="javascript:;" class="write-link attach"></a>
                     <input type="text" v-model="newMessage" />
-                    <a href="javascript:;" class="write-link smiley"></a>
                     <a href="javascript:;" class="write-link send" @click="sendMessage"></a>
                 </div>
             </div>
         </div>
     </div>
+  </el-card>
+   
 </template>
 
 <script setup>
@@ -85,6 +90,7 @@ const chats = [
             { sender: 'me', text: '... about who we used to be.' },
             { sender: 'me', text: 'Are you serious?' },
             { sender: 'you', text: 'When we were younger and free...' },
+            { sender: 'you', text: 'I\'ve forgotten how it felt before' },
             { sender: 'you', text: 'I\'ve forgotten how it felt before' }
         ] 
     },
@@ -155,6 +161,7 @@ const sendMessage = () => {
 </script>
 
 <style scoped>
+
 @charset "UTF-8";
 *, *:before, *:after {
   box-sizing: border-box;
@@ -170,6 +177,12 @@ const sendMessage = () => {
   --wrapper: 1000px;
   --blue: #00b0ff;
 }
+.card {
+  background-color:white;
+  width: 80%;
+  height: auto;
+  margin: auto;
+}
 
 body {
   background-color: var(--bg);
@@ -182,13 +195,43 @@ body {
   background-size: cover;
   background-repeat: none;
 }
+.separator{
+  width: 90%;
+  height: 100px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin: 20px auto;
+  /* background-color: #FFA500; */
+  border-radius: 30px;
+  padding: 10px;
+  border-bottom: 5px solid #FFA500;
+}
+.separator h2{
+  margin-left: 20px;
+  font-size: 40px;
+  font-weight: bold;
+  font-style: normal;
+  color: #333;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 1px;
+  line-height: 0;
+}
 
+.separator-image {
+  max-width: 80px; 
+  height: auto;
+}
 .wrapper {
   position: relative;
   left: 50%;
   width: var(--wrapper);
   height: 800px;
   transform: translate(-50%, 0);
+}
+.text{
+  width: 100%;
 }
 
 .container {
@@ -419,7 +462,7 @@ body {
 .container .right .write input {
   font-size: 16px;
   float: left;
-  width: 347px;
+  width: 600px;
   height: 40px;
   padding: 0 10px;
   color: var(--dark);

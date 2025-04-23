@@ -1,5 +1,5 @@
 <template>
-
+<div class="container">
 <section class="user">
   <div class="user_options-container">
     <div class="user_options-text">
@@ -56,7 +56,7 @@
     </div>
   </div>
 </section>
-
+</div>
 </template>
 
 <script setup>
@@ -103,7 +103,20 @@ const forgotPassword = () => {
 * {
   box-sizing: border-box;
 }
-
+.container {
+  width: 100%;
+  height: 90%;
+  background: radial-gradient(
+    125% 125% at -2% 101%,
+    rgba(204, 255, 153, 1) 10.5%,
+    rgba(217, 255, 179, 1) 16%,
+    rgba(229, 255, 204, 1) 17.5%,
+    rgba(242, 255, 229, 1) 25%,
+    rgba(247, 255, 237, 1) 40%,
+    rgba(237, 255, 242, 1) 65%,
+    rgba(229, 255, 250, 1) 100%
+  );
+}
 body {
   font-family: "Montserrat", sans-serif;
   font-size: 12px;
@@ -225,7 +238,7 @@ input::placeholder {
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: #ccc;
+  background: transparent;
   background-size: cover;
 }
 .user_options-container {
