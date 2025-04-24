@@ -1,7 +1,7 @@
 <template>
   <div class="separator">
-            <img src="../assets/主页.svg" alt="Milho Separator" class="separator-image" />
-            <h2>我的主页</h2>
+            <img src="../assets/个人中心.svg" alt="Milho Separator" class="separator-image" />
+            <h2>{{ user.username }}的主页</h2>
           </div>
   <el-container class="profile-container">
     <el-aside width="350px" class="left-panel">
@@ -30,7 +30,7 @@
             </el-col>
           </el-row>
         </div>
-        <el-button type="success" round class="siliao">问个问题</el-button>
+        <el-button type="success" round class="siliao" @click="ask">问个问题</el-button>
       </el-card>
     </el-aside>
 
@@ -41,6 +41,7 @@
           v-for="post in userPosts" 
           :key="post.id"
           class="post-item"
+          @click="$router.push(`/article/${post.id}`)"
         >
           <div class="post-header">
             <h4>{{ post.title }}</h4>
@@ -63,7 +64,11 @@
 
 <script setup>
 import { ref } from 'vue'
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
+const ask=()=>{
+  router.push('/Chat');
+}
 const user = ref({
   username: '示例用户',
   registerDate: '2023-01-01',
@@ -182,6 +187,7 @@ const userPosts = ref([
 .post-item:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
+  cursor: pointer;
 }
 .post-header {
   padding: 16px 20px 0;

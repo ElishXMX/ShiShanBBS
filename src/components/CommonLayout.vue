@@ -3,7 +3,7 @@
     <el-container>
       <el-header>
         <div class="header-content">
-          <h1>狮山论坛</h1>
+          <h1>狮山学坛</h1>
           <el-menu
             :default-active="activeMenu"
             mode="horizontal"

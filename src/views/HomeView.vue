@@ -40,13 +40,13 @@ const handleUserClick = (userId) => {
 const Users = reactive({
   users: [
       { 
-          id: 1,
-          name: '张三',
-          region: '北京',
-          province: '北京',
+          userId: 1,
+          username: '张三',
+          location: '北京',
           occupation: '前端工程师',
+          jobTitle: '前端开发',
+          degree:'',
           avatar: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-          registerDate: '2023-03-15'
       },
       {
           id: 2,
@@ -260,6 +260,7 @@ onMounted(() => {
     },
     visualMap: {
       left: 'right',
+      top: 'bottom',
       min: 0,
       max: Math.max(...Object.values(provinceData.value)),
       inRange: {
@@ -280,27 +281,28 @@ onMounted(() => {
       text: ['High', 'Low'],
       calculable: true
     },
-      series: [{
-          name: '中国地图',
-          type: 'map',
-          map: 'China',
-          roam: true,
-          selectedMode: 'single',
-          emphasis: {
-          label: {
-            show: true
-          },
-          itemStyle: {
-            color: provinceData.value > 0 ? '#ff7f50' : '#ddd',
-            cursor: provinceData.value > 0 ? 'pointer' : 'not-allowed'
-          }
+    series: [{
+      name: '中国地图',
+      type: 'map',
+      map: 'China',
+      roam: true,
+      selectedMode: 'single',
+      layoutCenter: ['50%', '50%'],
+      layoutSize: '280%',
+      emphasis: {
+        label: {
+          show: true
         },
-        data: Object.entries(provinceData.value).map(([name, value]) => ({
-          name: name + '省',
-          value: value
-        }))
-          
-      }]
+        itemStyle: {
+          color: provinceData.value > 0 ? '#ff7f50' : '#ddd',
+          cursor: provinceData.value > 0 ? 'pointer' : 'not-allowed'
+        }
+      },
+      data: Object.entries(provinceData.value).map(([name, value]) => ({
+        name: name + '省',
+        value: value
+      }))
+    }]
   };
   myChart.setOption(option);
   myChart.on('click', (params) => {

@@ -9,6 +9,21 @@
         <div class="user-info">
           <el-avatar :size="80" />
           <div class="user-meta">
+            <img 
+              src="../assets/老师教师男人.svg" 
+              alt="用户头像" 
+              class="user-avatar" 
+              :style="{ 
+                width: '150px', 
+                height: '150px', 
+                borderRadius: '50%', 
+                objectFit: 'cover',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: 'auto'
+              }"
+            />
             <h3 class="username">{{ userInfo.username }}</h3>
             <div class="info-grid">
               <div class="info-item">
@@ -41,9 +56,19 @@
         </div>
       </el-card>
       <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
+        <h3 class="section-title">我的简介</h3>
+      </el-card>
+      <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
         <h3 class="section-title">我的帖子</h3>
         <div class="posts-grid">
-          <el-card v-for="post in myPosts" :key="post.id" class="post-item" :style="{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px' }">
+          <el-card 
+            v-for="post in myPosts" 
+            :key="post.id" 
+            class="post-item" 
+            :style="{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px' }"
+            @click="$router.push(`/article/${post.id}`)"
+            style="cursor: pointer; transition: all 0.3s ease"
+          >
             <div class="post-header">
               <h4 class="post-title">{{ post.title }}</h4>
               <p class="post-content">{{ post.content }}</p>
@@ -199,8 +224,9 @@
 
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1rem;
+  width: 100%;
 }
 
 .post-item {
@@ -209,7 +235,8 @@
 }
 
 .post-item:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }
 
 .post-title {
@@ -270,23 +297,23 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const userInfo = ref({
-  userId: 12345,
+  userId: 12345,//自动生成,八位
+  username: '用户12138',
   realName: '张三',
   location: '北京',
-  occupation: '前端工程师',
-  jobTitle: '高级开发工程师',
-  username: '测试用户',
-  avatar: ''
+  occupation: '前端工程师',//研究方向
+  jobTitle: '高级开发工程师',//和学位二选一
+  degree:'',//攻读学位
+  avatar: '',//头像,
+  createTime: '2023-10-01',
+  profile:'',//简介,很多字
 })
 
 const handleLogout = () => {
   localStorage.removeItem('token')
   router.push('/login')
 }
-const hotPosts = ref([
-  { id: 1, title: 'Vue3最佳实践', views: 1520, likes: 245 },
-  { id: 2, title: 'SpringBoot技巧分享', views: 980, likes: 182 }
-])
+
 const showEditForm = ref(false)
 const editForm = ref({
   realName: '',

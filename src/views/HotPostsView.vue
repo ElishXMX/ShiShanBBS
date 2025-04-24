@@ -5,10 +5,11 @@
         <h3 class="section-title">热门话题</h3>
         <div class="tags-container">
           <el-tag
-            v-for="tag in ['Vue3', 'SpringBoot', '微服务','SpringBoot','SpringBoot','SpringBoot']"
+            v-for="tag in [...new Set(['Vue3', 'SpringBoot', '微服务'])]"
             :key="tag"
             class="topic-tag"
-            effect="dark"
+            :effect="selectedTags.includes(tag) ? 'dark' : 'light'"
+            :type="selectedTags.includes(tag) ? 'success' : 'success'"
             @click="handleTagClick(tag)"
           >
             {{ tag }}
@@ -42,8 +43,20 @@
             <h3>{{ post.title }}</h3>
             <p class="post-content">{{ post.content }}</p>
             <div class="post-image">
-            <img :src="post.imageUrl" alt="帖子配图">
+            <img :src=post.imageUrl alt="帖子配图">
           </div>
+          <div class="post-meta2">
+              <el-tag
+                v-for="tag in post.tags"
+                :key="tag"
+                class="post-tag"
+                effect="dark"
+                type="info"
+                size="small"
+              >
+                {{ tag }}
+              </el-tag>
+            </div>
             <div class="post-meta">
               <span>作者：{{ post.author }}</span>
               <span>时间：{{ post.time }}</span>
@@ -82,37 +95,65 @@ import { useDebounce } from '@/utils/useDebounce'
 const router = useRouter()
 const searchKeyword = ref('')
 
+const selectedTags = ref([])
+
+const handleTagClick = (tag) => {
+  const index = selectedTags.value.indexOf(tag)
+  if (index === -1) {
+    selectedTags.value.push(tag)
+  } else {
+    selectedTags.value.splice(index, 1)
+  }
+}
+
 const handleSearch = useDebounce(() => {
   // 防抖处理后的搜索逻辑
 }, 300)
 
 const filteredPosts = computed(() => {
-  if (!searchKeyword.value) return posts.value
-  const keyword = searchKeyword.value.toLowerCase()
-  return posts.value.filter(post => 
-    post.title.toLowerCase().includes(keyword)
-  )
+  let filtered = posts.value
+  
+  if (selectedTags.value.length > 0) {
+    filtered = filtered.filter(post => 
+      post.tags.some(tag => selectedTags.value.includes(tag))
+    )
+  }
+  
+  if (searchKeyword.value) {
+    const keyword = searchKeyword.value.toLowerCase()
+    filtered = filtered.filter(post => 
+      post.title.toLowerCase().includes(keyword)
+    )
+  }
+  
+  return filtered
 })
 
 const handlePostClick = (postId) => {
   console.log(`点击了文章：${postId}`)
-  router.push(`/article`)
+  router.push(`/article/${postId}`)
 }
 const posts = ref([
   { 
-    id: 1, 
+    articleId: 1, 
+    author: '张三',
+    time: '2023-10-01',
     title: 'Vue3最佳实践',
     content: '本文详细讲解Vue3的组合式API使用技巧...',
     views: 1520,
     likes: 245,
-    imageUrl: '..\assets\photo\image.png'
+    tags:['Vue3','SpringBoot'],
+    imageUrl: "../assets/老师教师男人.svg",
   },
   {
-    id: 2, 
+    articleId: 2, 
+    author: '张三',
+    time: '2023-10-01',
     title: 'SpringBoot技巧分享',
     content: '深入探讨SpringBoot自动配置原理...',
     views: 980,
     likes: 182,
+    tags:['SpringBoot','微服务'],
     imageUrl: '@/assets/post2.jpg'
   }
 ])
@@ -172,6 +213,7 @@ const posts = ref([
   margin: 15px 0;
   padding:20px;
   border-radius: 20px;
+  cursor: pointer;
 }
 
 .post-content {
@@ -190,32 +232,51 @@ const posts = ref([
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-columns: 1fr 200px;
-  gap: 12px;
-  margin-bottom: 12px;
-  min-height: 180px;
+  gap: 16px;
+  margin-bottom: 16px;
+  min-height: 200px;
 }
 
 .post-header h3 {
   grid-row: 1;
   grid-column: 1 / -1;
+  font-size: 18px;
+  margin: 0;
+  color: #333;
 }
 
 .post-content {
   grid-row: 2;
   grid-column: 1;
   align-self: start;
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
 }
 
 .post-image {
   grid-row: 2;
   grid-column: 2;
   margin: 0;
+  height: 140px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.post-meta {
+.post-meta .post-meta2{
   grid-row: 3;
   grid-column: 1 / -1;
   align-self: end;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #999;
+}
+
+.post-tag {
+  margin-right: 8px;
 }
 
 @media (max-width: 768px) {
@@ -293,7 +354,7 @@ const posts = ref([
 }
 .pagination {
   position: absolute;
-  bottom: 40px;
+  bottom: -10px;
   left: 0;
   right: 0;
 }

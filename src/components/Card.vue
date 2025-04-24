@@ -61,6 +61,8 @@
   
   <script setup>
   import { ref } from 'vue';
+  import { useRouter } from 'vue-router'
+  const router = useRouter()
   const props = defineProps({
     user: {
       type: Object,
@@ -92,7 +94,7 @@
     rotateY.value = 0;
   }
   const redirectToWebUrl=()=>{
-    window.open(props.person.groupWebUrl, '_blank');
+    router.push({ path: `/UserProfile/${props.user.id}` })
   }
   
   </script>
@@ -118,7 +120,7 @@
     border-radius: 16px;
     overflow: hidden;
     margin-top: 20px;
-    /* box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
     transform: translateZ(20px);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }

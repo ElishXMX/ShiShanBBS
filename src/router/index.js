@@ -32,12 +32,12 @@ const routes = [
         component: () => import('@/views/ProfileView.vue')
       },
       {
-        path: '/UserProfile',
+        path: '/UserProfile/:userId',
         name: 'UserProfile',
         component: () => import('@/views/UserProfileView.vue')
       },
       {
-        path: '/article',
+        path: '/article/:articleId',
         name: 'article',
         component: () => import('@/views/ArticleDetailView.vue')
       },

@@ -5,13 +5,13 @@
     <div class="user_options-text">
       <div class="user_options-unregistered">
         <h2 class="user_unregistered-title">没有账号?</h2>
-        <p class="user_unregistered-text">简洁描述注册优势</p>
+        <p class="user_unregistered-text">注册进入狮山学坛</p>
         <button class="user_unregistered-signup" @click="showSignupForm">注册</button>
       </div>
 
       <div class="user_options-registered">
         <h2 class="user_registered-title">已有账号?</h2>
-        <p class="user_registered-text">简洁描述登录优势</p>
+        <p class="user_registered-text">直接登录进入狮山学坛</p>
         <button class="user_registered-login" @click="showLoginForm">登录</button>
       </div>
     </div>
@@ -22,7 +22,7 @@
         <form @submit.prevent="handleLogin">
           <fieldset class="forms_fieldset">
             <div class="forms_field">
-              <input v-model="loginEmail" type="email" placeholder="邮箱" class="forms_field-input" required autofocus />
+              <input v-model="loginStudentID" type="email" placeholder="学号" class="forms_field-input" required autofocus />
             </div>
             <div class="forms_field">
               <input v-model="loginPassword" type="password" placeholder="密码" class="forms_field-input" required />
@@ -39,13 +39,16 @@
         <form @submit.prevent="handleSignup">
           <fieldset class="forms_fieldset">
             <div class="forms_field">
-              <input v-model="signupName" type="text" placeholder="姓名" class="forms_field-input" required />
+              <input v-model="signupName" type="text" placeholder="真实姓名" class="forms_field-input" required />
             </div>
             <div class="forms_field">
-              <input v-model="signupEmail" type="email" placeholder="邮箱" class="forms_field-input" required />
+              <input v-model="signupStudentID" type="number" placeholder="学号" class="forms_field-input" required />
             </div>
             <div class="forms_field">
               <input v-model="signupPassword" type="password" placeholder="密码" class="forms_field-input" required />
+            </div>
+            <div class="forms_field">
+              <input  type="password" placeholder="确认密码" class="forms_field-input" required />
             </div>
           </fieldset>
           <div class="forms_buttons">
@@ -63,10 +66,10 @@
 import { ref } from 'vue';
 
 const showSignup = ref(false);
-const loginEmail = ref('');
+const loginStudentID = ref('');
 const loginPassword = ref('');
 const signupName = ref('');
-const signupEmail = ref('');
+const signupStudentID = ref('');
 const signupPassword = ref('');
 
 const showSignupForm = () => {
@@ -80,6 +83,10 @@ const showLoginForm = () => {
 const handleLogin = () => {
   // 登录逻辑
   console.log('登录:', loginEmail.value, loginPassword.value);
+  //将用户数据存储到localStorage中
+  window.location.href = '/home';
+  localStorage.setItem('user', JSON.stringify({ userID:1 }));
+  // 登录成功后跳转到首页
 };
 
 const handleSignup = () => {
@@ -299,6 +306,7 @@ input::placeholder {
  * * Login and signup forms
  * */
 .user_options-forms {
+  height:500px;
   position: absolute;
   top: 50%;
   left: 30px;
