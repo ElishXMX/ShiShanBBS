@@ -22,7 +22,7 @@
         <form @submit.prevent="handleLogin">
           <fieldset class="forms_fieldset">
             <div class="forms_field">
-              <input v-model="loginStudentID" type="email" placeholder="学号" class="forms_field-input" required autofocus />
+              <input v-model="loginStudentID" type="string" placeholder="学号" class="forms_field-input" required autofocus />
             </div>
             <div class="forms_field">
               <input v-model="loginPassword" type="password" placeholder="密码" class="forms_field-input" required />
@@ -42,7 +42,7 @@
               <input v-model="signupName" type="text" placeholder="真实姓名" class="forms_field-input" required />
             </div>
             <div class="forms_field">
-              <input v-model="signupStudentID" type="number" placeholder="学号" class="forms_field-input" required />
+              <input v-model="signupStudentID" type="string" placeholder="学号" class="forms_field-input" required />
             </div>
             <div class="forms_field">
               <input v-model="signupPassword" type="password" placeholder="密码" class="forms_field-input" required />
@@ -64,6 +64,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 
 const showSignup = ref(false);
 const loginStudentID = ref('');
@@ -80,18 +81,60 @@ const showLoginForm = () => {
   showSignup.value = false;
 };
 
-const handleLogin = () => {
-  // 登录逻辑
-  console.log('登录:', loginEmail.value, loginPassword.value);
-  //将用户数据存储到localStorage中
-  window.location.href = '/home';
-  localStorage.setItem('user', JSON.stringify({ userID:1 }));
-  // 登录成功后跳转到首页
+const handleLogin = async () => {
+  try {
+    const response = await axios.post('/api/login', null, {
+        params: {
+            account: loginStudentID.value,
+            password: loginPassword.value
+        }
+    });
+    console.log(response)
+    if (response.data.code === 200) {
+      // 存储token和用户信息到localStorage
+      localStorage.setItem('token', response.data.data);
+      localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
+      
+      // 跳转到首页
+      window.location.href = '/home';
+    } else {
+      // 显示错误信息
+      alert(response.data.message || '登录失败');
+    }
+  } catch (error) {
+    console.error('登录出错:', error);
+    alert('登录失败，请检查网络或联系管理员');
+  }
 };
 
-const handleSignup = () => {
+
+const handleSignup = async () => {
   // 注册逻辑
-  console.log('注册:', signupName.value, signupEmail.value, signupPassword.value);
+  try {
+    const response = await axios.post('/api/register', null, {
+        params: {
+            account: signupStudentID.value,
+            realName: signupName.value,
+            password: signupPassword.value
+        }
+    });
+    console.log(response)
+    if (response.data.code === 200) {
+      // // 存储token和用户信息到localStorage
+      // localStorage.setItem('token', response.data.data);
+      // localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
+      
+      // // 跳转到首页
+      // window.location.href = '/home';
+      alert(response.data.message || '注册成功,请登录');
+    } else {
+      // 显示错误信息
+      alert(response.data.message || '注册失败');
+    }
+  } catch (error) {
+    console.error('注册出错:', error);
+    alert('注册失败，请检查网络或联系管理员');
+  }
 };
 
 const forgotPassword = () => {

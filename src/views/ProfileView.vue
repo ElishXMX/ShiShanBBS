@@ -291,10 +291,13 @@
 </style>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+//挂载时获取用户信息和帖子信息
 
 const userInfo = ref({
   userId: 12345,//自动生成,八位
@@ -353,6 +356,38 @@ const myPosts = ref([
     createTime: '2023-09-25'
   }
 ])
+
+const fetchUserData = async () => {
+  try {
+    const response = await axios.get('/api/getUserInfo')
+    userInfo.value = {
+      ...response.data,
+      userId: response.data.id || userInfo.value.userId
+    }
+    editForm.value = {
+      realName: response.data.realName,
+      location: response.data.location,
+      occupation: response.data.occupation,
+      jobTitle: response.data.jobTitle
+    }
+  } catch (error) {
+    ElMessage.error('获取用户信息失败: ' + error.message)
+  }
+}
+
+const fetchPostsData = async () => {
+  try {
+    // const response = await axios.get('/api/user/posts')
+    myPosts.value = response.data
+  } catch (error) {
+    ElMessage.error('获取帖子列表失败: ' + error.message)
+  }
+}
+
+onMounted(() => {
+  fetchUserData()
+  fetchPostsData()
+})
 </script>
 
 <style scoped>

@@ -2,8 +2,8 @@ import axios from 'axios'
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // api的base_url
-  timeout: 5000 // 请求超时时间
+  baseURL: "http://192.168.31.213:7070", // api的base_url
+  timeout: 15000 // 请求超时时间
 })
 
 // request拦截器

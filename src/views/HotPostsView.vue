@@ -38,12 +38,12 @@
         </el-input>
       </div>
       <div class="post-list">
-        <el-card v-for="post in filteredPosts" :key="post.id" class="post-card" @click="handlePostClick(post.id)">
+        <el-card v-for="post in filteredPosts" :key="post.articleId" class="post-card" @click="handlePostClick(post.articleId)">
           <div class="post-header">
             <h3>{{ post.title }}</h3>
-            <p class="post-content">{{ post.content }}</p>
+            <p class="post-content">{{ post.summary }}</p>
             <div class="post-image">
-            <img :src=post.imageUrl alt="帖子配图">
+            <img :src=post.cover alt="帖子配图">
           </div>
           <div class="post-meta2">
               <el-tag
@@ -58,8 +58,8 @@
               </el-tag>
             </div>
             <div class="post-meta">
-              <span>作者：{{ post.author }}</span>
-              <span>时间：{{ post.time }}</span>
+              <span>作者：{{ post.nickName }}</span>
+              <span>时间：{{ post.postTime }}</span>
             </div>
           </div>
           
@@ -88,9 +88,10 @@
 
 <script setup>
 import { Search } from '@element-plus/icons-vue'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useDebounce } from '@/utils/useDebounce'
+import axios from 'axios'
 
 const router = useRouter()
 const searchKeyword = ref('')
@@ -133,30 +134,345 @@ const handlePostClick = (postId) => {
   console.log(`点击了文章：${postId}`)
   router.push(`/article/${postId}`)
 }
-const posts = ref([
-  { 
-    articleId: 1, 
-    author: '张三',
-    time: '2023-10-01',
-    title: 'Vue3最佳实践',
-    content: '本文详细讲解Vue3的组合式API使用技巧...',
-    views: 1520,
-    likes: 245,
-    tags:['Vue3','SpringBoot'],
-    imageUrl: "../assets/老师教师男人.svg",
-  },
-  {
-    articleId: 2, 
-    author: '张三',
-    time: '2023-10-01',
-    title: 'SpringBoot技巧分享',
-    content: '深入探讨SpringBoot自动配置原理...',
-    views: 980,
-    likes: 182,
-    tags:['SpringBoot','微服务'],
-    imageUrl: '@/assets/post2.jpg'
+const posts = ref('')
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('/api/forum/loadArticle')
+//     const response = {
+//     "status": "success",
+//     "code": 200,
+//     "info": "请求成功",
+//     "data": {
+//         "totalCount": 18,
+//         "pageSize": 15,
+//         "pageNo": 1,
+//         "pageTotal": 2,
+//         "list": [
+//             {
+//                 "articleId": "RtiXj832TFL4nhW",
+//                 "boardId": 10003,
+//                 "boardName": "Vue",
+//                 "pBoardId": 10000,
+//                 "pBoardName": "前端",
+//                 "userId": "1890524956",
+//                 "nickName": "测试账号",
+//                 "userIpAddress": "未知",
+//                 "title": "第一个帖子，带图，带附件",
+//                 "cover": "202301/8Hyca1SDrUWhBRy.jpeg",
+//                 "content": null,
+//                 "summary": "第一个帖子，带图，带附件，这里是摘要",
+//                 "postTime": "2023-01-15 18:01:23",
+//                 "readCount": 103,
+//                 "goodCount": 1,
+//                 "commentCount": 4,
+//                 "topType": 0,
+//                 "attachmentType": 1,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "7QdXp0FkOIyJAsG",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "同样是光头造型，把刘学义茅子俊边程放一起，差别就出来了",
+//                 "cover": null,
+//                 "content": null,
+//                 "summary": "《少年歌行》剧版上线，豆瓣开分7.3，相信有数不清的书粉、漫粉慕名而来。圈里有这么一句大家都认同的老话，是说一部优秀的作品，原著是天，漫改是地，剧版则是毁天又灭地。那到底这部剧拍出来精髓还剩了多少？",
+//                 "postTime": "2023-01-16 10:01:14",
+//                 "readCount": 4,
+//                 "goodCount": 1,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "foP3hhNAJTVCQYz",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "新射雕英雄传：梅超风路透，孟子义散发超美，洪七公南帝路透！",
+//                 "cover": "202301/qkq0V8xvwQ8pQ4m.png",
+//                 "content": null,
+//                 "summary": "新版的射雕英雄传《金庸武侠世界》，目前还在拍摄中。一共有5个单元，请来了很多大家熟悉的演员",
+//                 "postTime": "2023-01-16 09:58:54",
+//                 "readCount": 78,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "V4a8RUmYw6X9R0y",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "投资仅850万，翻拍战狼，一上映就夺冠，于荣光带来一部生猛新片",
+//                 "cover": "202301/8nsyR6wYBFi2wBL.png",
+//                 "content": null,
+//                 "summary": "近些年的内地电影市场，线下院线的发展有所停滞，但是网大电影似乎迎来了一波发展高潮，众多明星都开始转型拍摄网大电影",
+//                 "postTime": "2023-01-16 10:01:43",
+//                 "readCount": 56,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "kFmzzykJHesxjuv",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "金庸笔下，若把射雕三男主vs天龙三兄弟，哪个更厉害？",
+//                 "cover": "202301/kOL99fdJztTWTa1.png",
+//                 "content": null,
+//                 "summary": "金庸先生一生写了多篇武侠小说，而最有影响力的莫过于《天龙八部》与“射雕三部曲”共四部小说。这四部小说不断被翻拍为影视作品，活跃在大众视野之下",
+//                 "postTime": "2023-01-16 10:09:28",
+//                 "readCount": 52,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "U2zRa4cFPwLF4rR",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "38岁凤姐现状：异国他乡漂泊十年，孤苦无依，网友“自作自受”",
+//                 "cover": "202301/M5Apq2fXSfqQ9Lu.png",
+//                 "content": null,
+//                 "summary": "在贴吧和博客刚刚诞生的那几年，一位凹着“S型”造型的美女，横空出世，她就是来自陕西的芙蓉姐姐。",
+//                 "postTime": "2023-01-16 10:00:18",
+//                 "readCount": 45,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "sgXFWoQx4Fn3BsN",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "连续9天拿下收视冠军！久违的谭松韵一出手，就是国剧天花板！",
+//                 "cover": "202301/OazOPuaQnfmpJcF.png",
+//                 "content": null,
+//                 "summary": "20岁，她在《甄嬛传》中演豆蔻少女“淳贵人”，少女的天真烂漫被她完美诠释，从而收获首波关注。",
+//                 "postTime": "2023-01-16 09:59:37",
+//                 "readCount": 42,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "gWiZMhCluNCfYRR",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "外媒镜头里的国内女星，简直堪比照妖镜：刘亦菲美的太不真实",
+//                 "cover": "202301/2lR1QAS78RUrdX4.png",
+//                 "content": null,
+//                 "summary": "拍照五分钟，P图两小时，想要青春永驻、容颜不老，P图和美颜技术必须要好",
+//                 "postTime": "2023-01-16 09:58:13",
+//                 "readCount": 23,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "Qyj3cTZFfhO3wZM",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "在拍戏的过程中我们真的很爱对方”，张彬彬为什么这样说",
+//                 "cover": "202301/d7eGKIvOtsBUFUo.png",
+//                 "content": null,
+//                 "summary": null,
+//                 "postTime": "2023-01-16 10:05:02",
+//                 "readCount": 10,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "QbanyzWzq3XV5KU",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "华为二公主姚安娜赢麻了！带资进组做配角，演技自然收获一致好评",
+//                 "cover": "202301/nxUQw81IuTtUYCU.png",
+//                 "content": null,
+//                 "summary": "由刘亦菲和李现合作出演的电视剧《去有风的地方》正在热播中，据悉这是神仙姐姐刘亦菲首部现代剧，自从刘亦菲主演的",
+//                 "postTime": "2023-01-16 09:57:32",
+//                 "readCount": 7,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "HBNzH4CgFsitvtf",
+//                 "boardId": 0,
+//                 "boardName": "",
+//                 "pBoardId": 10002,
+//                 "pBoardName": "摸鱼",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "赵樱子的演技，好吗？吴镇宇的不鼓掌就是最好的回答",
+//                 "cover": null,
+//                 "content": null,
+//                 "summary": "赵樱子身穿乞丐服，化着乞丐的妆容，扮演起了娇俏可人的黄蓉。",
+//                 "postTime": "2023-01-16 10:02:53",
+//                 "readCount": 5,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "NaU1ktjwN7h0EHf",
+//                 "boardId": 10003,
+//                 "boardName": "Vue",
+//                 "pBoardId": 10000,
+//                 "pBoardName": "前端",
+//                 "userId": "1890524956",
+//                 "nickName": "测试账号",
+//                 "userIpAddress": "未知",
+//                 "title": "创建一个应用",
+//                 "cover": "202301/iqlAZcksrj7NaDd.png",
+//                 "content": null,
+//                 "summary": "",
+//                 "postTime": "2023-01-16 09:31:13",
+//                 "readCount": 5,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "D3fj3tiHMCpDubm",
+//                 "boardId": 10003,
+//                 "boardName": "Vue",
+//                 "pBoardId": 10000,
+//                 "pBoardName": "前端",
+//                 "userId": "1890524956",
+//                 "nickName": "测试账号",
+//                 "userIpAddress": "未知",
+//                 "title": "Class 与 Style 绑定",
+//                 "cover": null,
+//                 "content": null,
+//                 "summary": null,
+//                 "postTime": "2023-01-16 09:35:14",
+//                 "readCount": 1,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "f9xkyY6K6mZZ41G",
+//                 "boardId": 10003,
+//                 "boardName": "Vue",
+//                 "pBoardId": 10000,
+//                 "pBoardName": "前端",
+//                 "userId": "7437465925",
+//                 "nickName": "测试账号02",
+//                 "userIpAddress": "未知",
+//                 "title": "条件渲染",
+//                 "cover": null,
+//                 "content": null,
+//                 "summary": "令用于条件性地渲染一块内容。这块内容只会在指令的表达式返回真值时才被渲染。",
+//                 "postTime": "2023-01-16 09:55:37",
+//                 "readCount": 1,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             },
+//             {
+//                 "articleId": "odFjtwnRa5pVvD8",
+//                 "boardId": 10003,
+//                 "boardName": "Vue",
+//                 "pBoardId": 10000,
+//                 "pBoardName": "前端",
+//                 "userId": "1890524956",
+//                 "nickName": "测试账号",
+//                 "userIpAddress": "未知",
+//                 "title": "计算属性",
+//                 "cover": null,
+//                 "content": null,
+//                 "summary": null,
+//                 "postTime": "2023-01-16 09:34:52",
+//                 "readCount": 1,
+//                 "goodCount": 0,
+//                 "commentCount": 0,
+//                 "topType": 0,
+//                 "attachmentType": 0,
+//                 "status": 1
+//             }
+//         ]
+//     }
+// }
+    posts.value = response.data.data.list
+    console.log('获取到的帖子数据:', posts.value)
+  } catch (error) {
+    console.error('获取热门帖子失败:', error)
   }
-])
+})
 </script>
 
 <style scoped>
