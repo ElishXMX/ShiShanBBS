@@ -112,25 +112,25 @@ const Users = reactive({
 let myChart;
 
 onMounted(() => {
-  // Users.loading = true;
-  // axios.post('/api/getAllUsers')
-  //   .then(response => {
-  //     Users.users = response.data.data;
-  //     console.log(Users.users);
-  //     initChart();
-  //   })
-  //   .catch(error => {
-  //     Users.error = error;
-  //     console.error('获取用户数据失败:', error);
-  //   })
-  //   .finally(() => {
-  //     Users.loading = false;
-  //   });
+  Users.loading = true;
+  axios.post('/api/getAllUsers')
+    .then(response => {
+      Users.users = response.data.data;
+      console.log(Users.users);
+      initChart();
+    })
+    .catch(error => {
+      Users.error = error;
+      console.error('获取用户数据失败:', error);
+    })
+    .finally(() => {
+      Users.loading = false;
+    });
   initChart();
 });
 const provinceData = computed(() => {
   return Users.users.reduce((acc, user) => {
-    acc[user.location] = (acc[user.location] || 0) + 1;
+    acc[user.province] = (acc[user.province] || 0) + 1;
     return acc;
   }, {});
 });
@@ -197,21 +197,19 @@ const initChart = () => {
   myChart.hideLoading();
   
   myChart.on('click', (params) => {
-    if (!validProvinces.value.includes(params.name.replace(/[省市]$/, ''))) return;
-    
-    myChart.dispatchAction({
-      type: 'unselect',
-      name: Users.filterRegion
-    });
-    
-    const region = params.name.replace(/[省市]$/, '');
-    Users.filterRegion = Users.filterRegion === region ? null : region;
-    
-    if (Users.filterRegion) {
-      myChart.dispatchAction({
-        type: 'select',
-        name: params.name
-      });
+    // 检查 params 是否存在以及 params.name 是否有效
+    if (params && params.name) {
+      console.log(params.name);
+      // 检查 validProvinces 中是否包含点击的省份
+      if (validProvinces.value.includes(params.name)) {
+        Users.filterRegion = params.name;
+      } else {
+        console.warn('点击的区域不是有效省份，不进行筛选', params.name);
+        Users.filterRegion = null;
+      }
+      console.log(Users.filterRegion);
+    } else {
+      console.warn('点击事件参数无效，无法获取区域名称');
     }
   });
 };
@@ -229,8 +227,9 @@ const validProvinces = computed(() => [...new Set(Users.users.map(u => u.provinc
 
 
 const chunkedUsers = computed(() => {
+  console.log(Users.filterRegion)
   const filtered = Users.filterRegion 
-    ? Users.users.filter(u => u.location === Users.filterRegion)
+    ? Users.users.filter(u => u.province === Users.filterRegion)
     : Users.users;
   return filtered
 });

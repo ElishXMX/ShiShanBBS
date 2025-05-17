@@ -92,8 +92,8 @@ const handleLogin = async () => {
     console.log(response)
     if (response.data.code === 200) {
       // 存储token和用户信息到localStorage
-      localStorage.setItem('token', response.data.data);
-      localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
+      console.log(response.data.data.userId)
+      localStorage.setItem('userID', response.data.data.userId);
       
       // 跳转到首页
       window.location.href = '/home';

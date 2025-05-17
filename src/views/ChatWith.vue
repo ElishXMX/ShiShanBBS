@@ -20,7 +20,7 @@
                         :class="{ active: activeChat === person.id }"
                         @click="setActiveChat(person.id)"
                     >
-                        <img :src="person.image" alt="" />
+                        <img src="../assets/老师教师男人.svg" alt="" />
                         <span class="name">{{ person.name }}</span>
                         <span class="time">{{ person.time }}</span>
                         <span class="preview">{{ person.preview }}</span>
@@ -61,101 +61,137 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
+const people = ref([{ id: 'person1', name: 'Thomas Bangalter', time: '2:09 PM', preview: 'I was wondering...' },
+    { id: 'person2', name: 'Dog Woofson', time: '1:44 PM', preview: 'I\'ve forgotten how it felt before' },
+    { id: 'person3', name: 'Louis CK', time: '2:09 PM', preview: 'But we’re probably gonna need a new carpet.' },
+    { id: 'person4', name: 'Bo Jackson', time: '2:09 PM', preview: 'It’s not that bad...' },
+    { id: 'person5', name: 'Michael Jordan', time: '2:09 PM', preview: 'Wasup for the third time like is you blind bitch' },
+    { id: 'person6', name: 'Drake', time: '2:09 PM', preview: 'howdoyoudoaspace' }]); // 联系人列表
 
-const people = [
-    { id: 'person1', name: 'Thomas Bangalter', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/thomas.jpg', time: '2:09 PM', preview: 'I was wondering...' },
-    { id: 'person2', name: 'Dog Woofson', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/dog.png', time: '1:44 PM', preview: 'I\'ve forgotten how it felt before' },
-    { id: 'person3', name: 'Louis CK', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/louis-ck.jpeg', time: '2:09 PM', preview: 'But we’re probably gonna need a new carpet.' },
-    { id: 'person4', name: 'Bo Jackson', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/bo-jackson.jpg', time: '2:09 PM', preview: 'It’s not that bad...' },
-    { id: 'person5', name: 'Michael Jordan', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/michael-jordan.jpg', time: '2:09 PM', preview: 'Wasup for the third time like is you blind bitch' },
-    { id: 'person6', name: 'Drake', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/382994/drake.jpg', time: '2:09 PM', preview: 'howdoyoudoaspace' }
-];
+//axios请求联系人
+axios.post('/api/message/getContacts',null,{
+  params:{
+    senderId:6943225789
+  }
+})
+  .then(response => {
+    // 处理响应数据
+    console.log(response.data.data);
+    const newPeople = response.data.data.map(item => ({
+      id: item.receiverId || `person${Date.now()}`,
+      name: item.nickName || '未知用户',
+      time: item.time || new Date().toLocaleTimeString(),
+    }));
+    // 更新原有的 people 数据
+    people.value=newPeople;
+  })
+  .catch(error => {
+    // 处理错误
+    console.error(error);
+  });
 
-const chats = [
-    { 
-        id: 'person1', 
-        startTime: 'Today, 6:48 AM', 
-        messages: [
-            { sender: 'you', text: 'Hello,' },
-            { sender: 'you', text: 'it\'s me.' },
-            { sender: 'you', text: 'I was wondering...' }
-        ] 
+//axios请求聊天消息
+axios.post('/api/message/getAll',null,{
+  params:{
+    senderId:6943225789
+  }
+}).then(response => {
+  // 处理响应数据
+  const newChats = response.data.data.map(item => ({
+    id: item.id || `person${Date.now()}`,
+    startTime: item.startTime || new Date().toLocaleTimeString(),
+    messages: item.messages || []
+  }));
+  console.log(newChats);
+  //改一下message里的senderId字段变成sender,如果id不是"6943225789"则写you,否则写me
+  newChats.forEach(chat => {
+    chat.messages.forEach(message => {
+      message.sender = message.senderId === "6943225789" ? "me" : "you";
+    });
+  });
+  chats.value=newChats;
+  console.log(chats.value);
+})
+
+  // 更新原有的 people 数据
+const chats =ref([
+    {
+        "id": "0796700655",
+        "startTime": "2025-05-07T03:12:13.000+00:00",
+        "messages": [
+            {
+                "senderId": "6943225789",
+                "text": "你好",
+                "sender": "you"
+            },
+            {
+                "senderId": "6943225789",
+                "text": "爸爸",
+                "sender": "you"
+            },
+            {
+                "senderId": "6943225789",
+                "text": "666",
+                "sender": "you"
+            },
+            {
+                "senderId": "6943225789",
+                "text": "nb",
+                "sender": "you"
+            }
+        ]
     },
-    { 
-        id: 'person2', 
-        startTime: 'Today, 5:38 PM', 
-        messages: [
-            { sender: 'you', text: 'Hello, can you hear me?' },
-            { sender: 'you', text: 'I\'m in California dreaming' },
-            { sender: 'me', text: '... about who we used to be.' },
-            { sender: 'me', text: 'Are you serious?' },
-            { sender: 'you', text: 'When we were younger and free...' },
-            { sender: 'you', text: 'I\'ve forgotten how it felt before' },
-            { sender: 'you', text: 'I\'ve forgotten how it felt before' }
-        ] 
-    },
-    { 
-        id: 'person3', 
-        startTime: 'Today, 3:38 AM', 
-        messages: [
-            { sender: 'you', text: 'Hey human!' },
-            { sender: 'you', text: 'Umm... Someone took a shit in the hallway.' },
-            { sender: 'me', text: '... what.' },
-            { sender: 'me', text: 'Are you serious?' },
-            { sender: 'you', text: 'I mean...' },
-            { sender: 'you', text: 'It’s not that bad...' },
-            { sender: 'you', text: 'But we’re probably gonna need a new carpet.' }
-        ] 
-    },
-    { 
-        id: 'person4', 
-        startTime: 'Yesterday, 4:20 PM', 
-        messages: [
-            { sender: 'me', text: 'Hey human!' },
-            { sender: 'me', text: 'Umm... Someone took a shit in the hallway.' },
-            { sender: 'you', text: '... what.' },
-            { sender: 'you', text: 'Are you serious?' },
-            { sender: 'me', text: 'I mean...' },
-            { sender: 'me', text: 'It’s not that bad...' }
-        ] 
-    },
-    { 
-        id: 'person5', 
-        startTime: 'Today, 6:28 AM', 
-        messages: [
-            { sender: 'you', text: 'Wasup' },
-            { sender: 'you', text: 'Wasup' },
-            { sender: 'you', text: 'Wasup for the third time like is <br />you blind bitch' }
-        ] 
-    },
-    { 
-        id: 'person6', 
-        startTime: 'Monday, 1:27 PM', 
-        messages: [
-            { sender: 'you', text: 'So, how\'s your new phone?' },
-            { sender: 'you', text: 'You finally have a smartphone :D' },
-            { sender: 'me', text: 'Drake?' },
-            { sender: 'me', text: 'Why aren\'t you answering?' },
-            { sender: 'you', text: 'howdoyoudoaspace' }
-        ] 
+    {
+        "id": "5129026300",
+        "startTime": "2025-05-07T03:15:02.000+00:00",
+        "messages": [
+            {
+                "senderId": "6943225789",
+                "text": "哈吉马",
+                "sender": "you"
+            },
+            {
+                "senderId": "6943225789",
+                "text": "哈吉米",
+                "sender": "you"
+            }
+        ]
     }
-];
+]) 
 
 const activeChat = ref('person2');
-const activePersonName = ref(people.find(p => p.id === 'person2').name);
+const activePersonName = ref(people.value.find(p => p.id === 'person2').name);
 const newMessage = ref('');
 
 const setActiveChat = (chatId) => {
     activeChat.value = chatId;
-    const person = people.find(p => p.id === chatId);
+    const person = people.value.find(p => p.id === chatId);
     activePersonName.value = person.name;
 };
 
-const sendMessage = () => {
+const sendMessage = async () => {
     if (newMessage.value) {
-        const currentChat = chats.find(c => c.id === activeChat.value);
-        currentChat.messages.push({ sender: 'me', text: newMessage.value });
-        newMessage.value = '';
+        try {
+            // 发送消息的请求
+            const response = await axios.post('/api/message/send',null, {params:{
+                senderId: 6943225789,
+                receiverId: activeChat.value,
+                content: newMessage.value
+            }});
+
+            if (response.data.success) {
+const currentChat = chats.value.find(chat => chat.id === activeChat.value);
+if (currentChat) {
+  currentChat.messages.push({ sender: 'me', text: newMessage.value });
+}
+                newMessage.value = '';
+            } else {
+                console.error('消息发送失败:', response.data.message);
+            }
+        } catch (error) {
+            console.error('发送消息时出错:', error);
+        }
     }
 };
 </script>

@@ -25,7 +25,7 @@
         <!-- <p class="teachership">{{ person.teachership}}</p> -->
       </div>
       <!-- <button class="intro-btn" @click="redirectToWebUrl">查看课题组简介</button> -->
-<button class="cta" @click="redirectToWebUrl">
+<button class="cta" @click="redirectToWebUrl(person.userId)">
   <span class="span">点击跳转至课题组网站</span>
   <span class="second">
     <svg
@@ -98,8 +98,9 @@ const handleMouseLeave = () => {
   rotateX.value = 0;
   rotateY.value = 0;
 }
-const redirectToWebUrl=()=>{
-  window.open(props.person.groupWebUrl, '_blank');
+const redirectToWebUrl=(userId)=>{
+  console.log(userId)
+  // router.push(`/UserProfile/${userId}`)
 }
 
 </script>

@@ -10,14 +10,14 @@
           <img src="../assets/老师教师男人.svg" alt="">
         </div>
         <div class="info">
-          <span class="name">{{ user.name }}</span>
+          <span class="name">{{ user.nickName }}</span>
           <p class="member_position">{{ user.occupation}}</p>
           <span class="fenge"></span>
-          <p class="member_introduction">{{ user.province}} {{ user.region}}</p>
-          <!-- <p class="teachership">{{ person.teachership}}</p> -->
+          <p class="member_introduction">{{ user.province}} {{ user.location}}</p>
+          <!-- <p class="teachership">{{ user.degree}}</p> -->
         </div>
         <!-- <button class="intro-btn" @click="redirectToWebUrl">查看课题组简介</button> -->
-  <button class="cta" @click="redirectToWebUrl">
+  <button class="cta" @click="redirectToWebUrl(user.userId)">
     <span class="span">点击进入个人主页</span>
     <span class="second">
       <svg
@@ -93,9 +93,10 @@
     rotateX.value = 0;
     rotateY.value = 0;
   }
-  const redirectToWebUrl=()=>{
-    router.push({ path: `/UserProfile/${props.user.id}` })
-  }
+  const redirectToWebUrl=(userId)=>{
+  console.log(userId)
+  router.push(`/UserProfile/${userId}`)
+}
   
   </script>
   
@@ -190,7 +191,7 @@
     transition: all 0.3s;
     width:50%; 
     max-height: 250px;
-     max-height: 250px;
+     max-height: 260px;
      overflow: hidden;
      padding-bottom: 20px;
   }

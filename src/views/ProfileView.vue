@@ -19,12 +19,12 @@
                 borderRadius: '50%', 
                 objectFit: 'cover',
                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                display: 'block',
+                display: 'block', 
                 marginLeft: 'auto',
                 marginRight: 'auto'
               }"
             />
-            <h3 class="username">{{ userInfo.username }}</h3>
+            <h3 class="username">昵称:{{ userInfo.nickName }}</h3>
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">真实姓名：</span>
@@ -32,19 +32,19 @@
               </div>
               <div class="info-item">
                 <span class="label">账号ID：</span>
-                <span class="value">{{ userInfo.userId }}</span>
+                <span class="value">{{ userInfo.account }}</span>
               </div>
               <div class="info-item">
                 <span class="label">现居地：</span>
-                <span class="value">{{ userInfo.location }}</span>
+                <span class="value">{{userInfo.province}}{{userInfo.location }}</span>
               </div>
               <div class="info-item">
-                <span class="label">职业：</span>
+                <span class="label">研究方向</span>
                 <span class="value">{{ userInfo.occupation }}</span>
               </div>
               <div class="info-item">
                 <span class="label">工作岗位：</span>
-                <span class="value">{{ userInfo.jobTitle }}</span>
+                <span class="value">{{ userInfo.degree }}</span>
               </div>
             </div>
             <div class="action-buttons">
@@ -56,24 +56,40 @@
         </div>
       </el-card>
       <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
-        <h3 class="section-title">我的简介</h3>
+        <h3 class="section-title">{{userInfo.personDescription}}</h3>
       </el-card>
-      <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
+     
+    </div>
+    <el-card class="posts-card" :style="{ boxShadow: '0 4px 12px rgba(0,0,0,0.15)', borderRadius: '12px' }">
         <h3 class="section-title">我的帖子</h3>
         <div class="posts-grid">
           <el-card 
             v-for="post in myPosts" 
-            :key="post.id" 
+            :key="post.articleId" 
             class="post-item" 
-            :style="{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)', borderRadius: '8px' }"
-            @click="$router.push(`/article/${post.id}`)"
-            style="cursor: pointer; transition: all 0.3s ease"
+            :style="{ boxShadow: '0 2px 12px rgba(0,0,0,0.08)', borderRadius: '12px' }"
+            @click="$router.push(`/article/${post.articleId}`)"
+            style="cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)"
           >
             <div class="post-header">
-              <h4 class="post-title">{{ post.title }}</h4>
-              <p class="post-content">{{ post.content }}</p>
-              <div class="post-meta">
-                <span class="post-date">发布时间：{{ post.createTime }}</span>
+              <h4 class="post-title" style="font-size: 1.2rem; color: #1a73e8; margin-bottom: 0.8rem;">{{ post.title }}</h4>
+              <p class="post-content" style="font-size: 0.95rem; color: #5f6368; line-height: 1.6; margin-bottom: 1rem;">{{ post.summary }}</p>
+              <div class="post-tags" style="margin-bottom: 1rem;">
+                <el-tag 
+                  v-for="tag in post.tag" 
+                  :key="tag" 
+                  size="small" 
+                  style="margin-right: 0.5rem;"
+                >
+                  {{ tag }}
+                </el-tag>
+              </div>
+              <div class="post-meta" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="post-date" style="font-size: 0.85rem; color: #70757a;">发布时间：{{ post.postTime }}</span>
+                <div>
+                  <span style="font-size: 0.85rem; color: #70757a; margin-right: 1rem;">阅读: {{ post.readCount }}</span>
+                  <span style="font-size: 0.85rem; color: #70757a;">点赞: {{ post.goodCount }}</span>
+                </div>
               </div>
             </div>
           </el-card>
@@ -84,21 +100,29 @@
           class="pagination"
         />
       </el-card>
-    </div>
     <div v-show="showEditForm || showPasswordForm" class="mask">
       <div v-show="showEditForm" class="mask-content">
         <el-form :model="editForm" label-width="80px" class="edit-form">
-          <el-form-item label="真实姓名">
-            <el-input v-model="editForm.realName" />
+          <el-form-item label="昵称">
+            <el-input v-model="editForm.nickName" />
+          </el-form-item>
+          <el-form-item label="省份">
+            <el-input v-model="editForm.province" />
           </el-form-item>
           <el-form-item label="现居地">
             <el-input v-model="editForm.location" />
-          </el-form-item>
-          <el-form-item label="职业">
+          </el-form-item> 
+          <el-form-item label="zhiye">
             <el-input v-model="editForm.occupation" />
           </el-form-item>
           <el-form-item label="工作岗位">
             <el-input v-model="editForm.jobTitle" />
+          </el-form-item>
+          <el-form-item label="职位">
+            <el-input v-model="editForm.degree" />
+          </el-form-item>
+          <el-form-item label="个人简介">
+            <el-input v-model="editForm.personDescription" type="textarea" :rows="3" />
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="handleEditInfo">保存</el-button>
@@ -230,30 +254,35 @@
 }
 
 .post-item {
-  padding: 1rem;
-  transition: transform 0.2s ease;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .post-item:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12) !important;
+  border-color: rgba(66, 133, 244, 0.2);
 }
 
 .post-title {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  color: #303133;
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  color: #1a73e8;
+  font-weight: 500;
 }
 
 .post-content {
-  font-size: 0.9rem;
-  color: #606266;
-  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+  color: #5f6368;
+  line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
 .post-date {
-  font-size: 0.8rem;
-  color: #909399;
+  font-size: 0.85rem;
+  color: #70757a;
 }
 
 .pagination {
@@ -298,77 +327,25 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 //挂载时获取用户信息和帖子信息
-
-const userInfo = ref({
-  userId: 12345,//自动生成,八位
-  username: '用户12138',
-  realName: '张三',
-  location: '北京',
-  occupation: '前端工程师',//研究方向
-  jobTitle: '高级开发工程师',//和学位二选一
-  degree:'',//攻读学位
-  avatar: '',//头像,
-  createTime: '2023-10-01',
-  profile:'',//简介,很多字
-})
-
-const handleLogout = () => {
-  localStorage.removeItem('token')
-  router.push('/login')
-}
-
-const showEditForm = ref(false)
-const editForm = ref({
-  realName: '',
-  location: '',
-  occupation: '',
-  jobTitle: ''
-})
-const showPasswordForm = ref(false)
-const passwordForm = ref({
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-})
-const handleEditInfo = () => {
-  userInfo.value.realName = editForm.value.realName
-  userInfo.value.location = editForm.value.location
-  userInfo.value.occupation = editForm.value.occupation
-  userInfo.value.jobTitle = editForm.value.jobTitle
-  showEditForm.value = false
-}
-
-const handleChangePassword = () => {
-  // 密码修改逻辑
-  console.log('修改密码:', passwordForm.value)
-}
-const myPosts = ref([
-  { 
-    id: 1, 
-    title: 'Vue3最佳实践', 
-    content: '本文详细讲解Vue3的组合式API使用技巧...',
-    createTime: '2023-10-01'
-  },
-  {
-    id: 2,
-    title: 'SpringBoot技巧分享',
-    content: '分享SpringBoot开发中的实用技巧...',
-    createTime: '2023-09-25'
-  }
-])
-
 const fetchUserData = async () => {
   try {
-    const response = await axios.get('/api/getUserInfo')
+    const response = await axios.post('/api/getUserInfo', {
+      params: {
+        userId: localStorage.getItem('userID')
+      }
+    })
     userInfo.value = {
-      ...response.data,
-      userId: response.data.id || userInfo.value.userId
+      ...response.data.data,
     }
+    console.log('用户信息:', userInfo.value)
     editForm.value = {
-      realName: response.data.realName,
-      location: response.data.location,
-      occupation: response.data.occupation,
-      jobTitle: response.data.jobTitle
+      nickName: userInfo.value.nickName,
+      province: userInfo.value.province,
+      location: userInfo.value.location,
+      occupation: userInfo.value.occupation,
+      jobTitle: userInfo.value.jobTitle,
+      degree: userInfo.value.degree,
+      personDescription: userInfo.value.personDescription
     }
   } catch (error) {
     ElMessage.error('获取用户信息失败: ' + error.message)
@@ -377,12 +354,156 @@ const fetchUserData = async () => {
 
 const fetchPostsData = async () => {
   try {
-    // const response = await axios.get('/api/user/posts')
-    myPosts.value = response.data
+    const response = await axios.get('/api/ucenter/loadUserArticle',
+      {
+        params: {
+          userId: localStorage.getItem('userID'),
+          type:0,
+        }
+      }
+    )
+    myPosts.value = response.data.data.list
+    console.log('帖子信息:', myPosts.value)
   } catch (error) {
     ElMessage.error('获取帖子列表失败: ' + error.message)
   }
 }
+const userInfo = ref(
+  {
+    "nickName": "emma_w",
+    "province": "陕西省",
+    "userId": "6943225789",
+    "account": "2023317220307",
+    "realName": "肖明煊",
+    "location": "西安市",
+    "occupation": "生物信息学",
+    "jobTitle": null,
+    "degree": "生物信息学博士",
+    "avatar": null,
+    "personDescription": "探索生命科学的奥秘",
+    "joinTime": "2025-04-25T08:36:56.000+00:00",
+    "admin": false
+}
+)
+
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  router.push('/login')
+}
+
+const showEditForm = ref(false)
+const editForm = ref({
+  nickName: userInfo.nickName,
+  location: userInfo.value.location,
+  province: userInfo.value.province,
+  occupation: userInfo.value.occupation,
+  jobTitle: userInfo.value.jobTitle,
+  degree: userInfo.value.degree,
+  personDescription: userInfo.value.personDescription
+})
+const showPasswordForm = ref(false)
+const passwordForm = ref({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const handleEditInfo = async () => {
+  try {
+const response = await axios.post('/api/ucenter/updateUserInfo', {
+    nickName: editForm.value.nickName,
+    province: editForm.value.province,
+    location: editForm.value.location,
+    occupation: editForm.value.occupation,
+    jobTitle: editForm.value.jobTitle,
+    degree: editForm.value.degree,
+    personDescription: editForm.value.personDescription
+  
+})
+    
+    if (response.data.code === 200) {
+      ElMessage.success('用户信息更新成功')
+      setTimeout(() => {
+        const response =  axios.post('/api/getUserInfo', {
+      params: {
+        userId: localStorage.getItem('userID')
+      }
+    })
+    userInfo.value = {
+      ...response.data.data,
+    }
+      },1000)
+      showEditForm.value = false
+      handleLogout();
+    } else {
+      ElMessage.error(response.data.message || '更新用户信息失败')
+    }
+  } catch (error) {
+    ElMessage.error('网络错误: ' + error.message)
+  }
+}
+
+const handleChangePassword = () => {
+  // 密码修改逻辑
+  console.log('修改密码:', passwordForm.value)
+}
+const myPosts = ref([
+  {
+    "articleId": "7QdXp0FkOIyJAsG",
+    "boardId": null,
+    "boardName": "",
+    "pBoardId": null,
+    "pBoardName": "",
+    "userId": "0796700655",
+    "nickName": "alice_2023",
+    "userIpAddress": "未知",
+    "title": "[算法基础] 递归算法入门：从斐波那契数列到汉诺塔",
+    "cover": null,
+    "content": null,
+    "summary": "深入浅出解析递归算法的核心思想与实现技巧。",
+    "postTime": "2023-01-16 10:01:14",
+    "readCount": 8,
+    "goodCount": 2,
+    "commentCount": 0,
+    "topType": 0,
+    "attachmentType": 0,
+    "status": 1,
+    "tag": [
+      "算法",
+      "编程",
+      "基础",
+      "递归"
+    ]
+  },
+  {
+    "articleId": "D3fj3tiHMCpDubm",
+    "boardId": null,
+    "boardName": "",
+    "pBoardId": null,
+    "pBoardName": "",
+    "userId": "0796700655",
+    "nickName": "alice_2023",
+    "userIpAddress": "未知",
+    "title": "如何设计一个高并发的分布式系统？",
+    "cover": null,
+    "content": null,
+    "summary": "探讨分布式系统设计的核心原则与实践经验。",
+    "postTime": "2023-01-16 09:35:14",
+    "readCount": 1,
+    "goodCount": 0,
+    "commentCount": 0,
+    "topType": 0,
+    "attachmentType": 0,
+    "status": 1,
+    "tag": [
+      "分布式系统",
+      "高并发",
+      "架构设计",
+      "云计算"
+    ]
+  }
+])
+
+
 
 onMounted(() => {
   fetchUserData()

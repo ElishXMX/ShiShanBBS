@@ -22,8 +22,21 @@
         </div>
       </button>
       <div class="tags-container">
+        <el-tag
+          v-for="tag in articleInfo.tags"
+          :key="tag"
+          type="success"
+          class="tag-item"
+          effect="dark"
+          round
+          @click="handleTagClick(tag)"
+        >
+          {{ tag }}
+        </el-tag>
+      </div>
+      <div class="tags-container">
     <el-tag
-      v-for="tag in articleInfo.tags"
+      v-for="tag in articleInfo.tag"
       :key="tag"
       type="success"
       class="tag-item"
@@ -49,7 +62,7 @@
     <div class="article-sidebar-right">
       <div class="author-info">
         <div class="author-header" @click="goToAuthorPage">
-          <el-avatar :size="60" :src="authorInfo.avatar" />
+          <img src="../assets/老师教师男人.svg" :width="60" :height="60" alt="作者头像" />
           <h3>{{authorInfo.name}}</h3>
         </div>
         <div class="author-meta">
@@ -268,6 +281,17 @@ const articleInfo = ref({});
 mdContent.value = articleInfo.content;
 const handleLike = () => {
   // 处理点赞逻辑
+  //调用接口点赞
+  console.log(articleInfo.value.articleId)
+  axios.post('/api/forum/doLike',null,{
+    params: {
+      articleId: articleInfo.value.articleId
+    }
+  }).then(res => {
+    if (res.data.code === 200) {
+      articleInfo.value.goodCount++;
+    } 
+  });
   const likeButton = document.querySelector('.article-sidebar-left:nthchild(1)');
   if (likeButton) {
     likeButton.classList.toggle('active');
@@ -303,7 +327,7 @@ import {useRoute} from 'vue-router';
 const router = useRouter();
 const goToAuthorPage = () => {
   // 跳转到作者主页
-  router.push(`/UserProfile/${authorInfo.id}`);
+  router.push(`/UserProfile/${authorInfo.value.id}`);
 };
 
 import { onMounted } from 'vue';
@@ -318,9 +342,21 @@ async function fetchAuthorData(userId) {
     const response = await axios.post('/api/ucenter/getUserInfo', null, {
       params: { userId }
     });
-    authorInfo.value = response.data.data;
+    if (response.data && response.data.data) {
+      authorInfo.value = {
+        id: response.data.data.userId,
+        name: response.data.data.nickName,
+        avatar: response.data.data.avatar,
+        researchField: response.data.data.researchField || '未填写',
+        articlesCount: response.data.data.articlesCount || 0,
+        followers: response.data.data.followers || 0,
+        bio: response.data.data.bio || '暂无简介'
+      };
+      console.log(authorInfo.value);
+    }
   } catch (error) {
     console.error('获取作者信息失败:', error);
+    ElMessage.error('获取作者信息失败');
   }
 }
 
